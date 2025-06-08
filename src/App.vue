@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import ClipboardHistory from "./components/ClipboardHistory.vue";
-
+import Clip from "./components/Clip.vue";
 const greetMsg = ref("");
 const name = ref("");
 
@@ -36,6 +36,10 @@ async function greet() {
     <p>{{ greetMsg }}</p>
 
     <clipboard-history />
+
+    <div class="my-32">
+      <clip />
+    </div>
   </main>
 </template>
 
