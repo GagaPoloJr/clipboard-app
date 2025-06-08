@@ -7,6 +7,8 @@ use tauri::AppHandle;
 use tauri::Emitter;
 use tauri_plugin_clipboard_manager::ClipboardExt;
 
+mod system_tray;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -18,6 +20,10 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .setup(|app| {
+            // init the called tray icon
+            system_tray::init_tray(app)?;
+
+            // TODO: will refactor this thhings into modular codes called history_monitor
             let handle: AppHandle = app.handle().clone();
             let last_clip = Arc::new(Mutex::new(String::new()));
             let last_clip_clone = last_clip.clone();
