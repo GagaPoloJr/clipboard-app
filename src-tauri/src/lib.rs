@@ -1,12 +1,6 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use std::sync::Arc;
-use std::sync::Mutex;
-use std::time::Duration;
 
-use tauri::AppHandle;
-use tauri::Emitter;
-use tauri_plugin_clipboard_manager::ClipboardExt;
-
+mod clipboard_monitor;
 mod system_tray;
 
 #[tauri::command]
@@ -23,28 +17,7 @@ pub fn run() {
             // init the called tray icon
             system_tray::init_tray(app)?;
 
-            // TODO: will refactor this thhings into modular codes called history_monitor
-            let handle: AppHandle = app.handle().clone();
-            let last_clip = Arc::new(Mutex::new(String::new()));
-            let last_clip_clone = last_clip.clone();
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    match handle.clipboard().read_text() {
-                        Ok(content) => {
-                            let mut last = last_clip_clone.lock().unwrap();
-                            if *last != content {
-                                *last = content.clone();
-                                let _ = handle.emit("clipboard-update", content);
-                            }
-                        }
-                        Err(e) => {
-                            eprintln!("Clipboard read error: {:?}", e);
-                        }
-                    }
-                    tokio::time::sleep(Duration::from_millis(500)).await;
-                }
-            });
-
+            clipboard_monitor::init_clipboard_monitor(app)?;
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![greet])
