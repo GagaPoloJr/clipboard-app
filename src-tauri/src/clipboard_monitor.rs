@@ -1,8 +1,8 @@
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-use tauri::{App, AppHandle};
 use tauri::Emitter;
+use tauri::{App, AppHandle};
 use tauri_plugin_clipboard_manager::ClipboardExt;
 
 pub fn init_clipboard_monitor(app: &App) -> tauri::Result<()> {
